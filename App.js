@@ -1,20 +1,54 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import './global.css';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { AuthProvider } from './src/context/AuthContext';
+
+import SplashScreen from './src/screens/Splash';
+import Welcome from './src/screens/Welcome';
+import Login from './src/screens/Login';
+import Register from './src/screens/Register';
+import BottomTabs from './src/navigation/BottomTabs';
+import TestStart from './src/screens/TestStart';
+import Tests from "./src/screens/Tests";
+import TestSession from "./src/screens/TestSession";
+import GoogleRedirectHandler from "./src/screens/GoogleRedirectHandler";
+import VoiceSession from "./src/screens/VoiceSession";
+
+const Stack = createNativeStackNavigator();
+
+const AppNavigator = () => {
+    return (
+        <NavigationContainer
+            linking={{prefixes: ['https://dev.fixmymind.org'],config: {
+                screens: {
+                        GoogleRedirect: 'redirect',
+                        // dodaj inne jeśli chcesz wspierać bezpośrednie linki
+                    },},}}>
+            <Stack.Navigator
+                screenOptions={{ headerShown: false }}
+                initialRouteName="Splash"
+            >
+                <Stack.Screen name="Splash" component={SplashScreen} />
+                <Stack.Screen name="Main" component={BottomTabs} />
+                <Stack.Screen name="Welcome" component={Welcome} />
+                <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="Register" component={Register} />
+                <Stack.Screen name="TestStart" component={TestStart} />
+                <Stack.Screen name="Tests" component={Tests} />
+                <Stack.Screen name="TestSession" component={TestSession} />
+                <Stack.Screen name="VoiceSession" component={VoiceSession} />
+                <Stack.Screen name="GoogleRedirect" component={GoogleRedirectHandler} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
+};
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+    return (
+        <AuthProvider>
+            <AppNavigator />
+        </AuthProvider>
+    );
+}

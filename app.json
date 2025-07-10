@@ -2,7 +2,9 @@
   "expo": {
     "name": "fixmymind",
     "slug": "fixmymind",
+    "owner": "jdrabek",
     "version": "1.0.0",
+    "scheme": "fixmymind",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -24,6 +26,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-audio"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "your-eas-project-id"
+      }
     }
   }
 }

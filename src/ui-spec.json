@@ -1,0 +1,198 @@
+{
+  "screens": [
+    {
+      "name": "Onboarding",
+      "components": [
+        {
+          "type": "OnboardingCard",
+          "props": {
+            "title": "Witaj w fixmymind",
+            "description": "Rozpocznij swoją sesję terapeutyczną prowadzoną przez AI.",
+            "image": "onboarding.png"
+          }
+        },
+        {
+          "type": "Button",
+          "props": {
+            "label": "Rozpocznij",
+            "action": "goToLogin"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Login",
+      "components": [
+        {
+          "type": "Header",
+          "props": { "title": "Logowanie", "showBackButton": false }
+        },
+        {
+          "type": "LoginForm",
+          "props": {
+            "fields": [
+              { "name": "email", "placeholder": "Email" },
+              { "name": "password", "placeholder": "Hasło", "secure": true }
+            ],
+            "submitLabel": "Zaloguj się"
+          }
+        },
+        {
+          "type": "Button",
+          "props": { "label": "Rejestracja", "action": "goToRegister" }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "components": [
+        {
+          "type": "Header",
+          "props": { "title": "Strona Główna", "showBackButton": false }
+        },
+        {
+          "type": "Button",
+          "props": {
+            "label": "Rozpocznij nową sesję",
+            "action": "VoiceSession",
+            "style": "primaryLarge"
+          }
+        },
+        {
+          "type": "SessionSummary",
+          "props": {
+            "sessions": [
+              { "id": "s1", "date_time": "2025-06-10 14:30", "summary": "Omówienie stresu" },
+              { "id": "s2", "date_time": "2025-06-15 10:00", "summary": "Techniki relaksacyjne" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "VoiceSession",
+      "components": [
+        {
+          "type": "Header",
+          "props": { "title": "Sesja głosowa", "showBackButton": true }
+        },
+        {
+          "type": "VoiceTranscript",
+          "props": { "liveText": "", "placeholder": "Słucham..." }
+        },
+        {
+          "type": "VoiceInput",
+          "props": { "listening": true }
+        },
+        {
+          "type": "VoiceOutput",
+          "props": { "speaking": false, "text": "AI terapeuta odpowiada..." }
+        }
+      ]
+    },
+    {
+      "name": "History",
+      "components": [
+        { "type": "Header", "props": { "title": "Historia", "showBackButton": true } },
+        {
+          "type": "HistoryList",
+          "props": {
+            "sessions": [
+              { "id": "s1", "date_time": "2025-06-10 14:30", "summary": "Omówienie stresu", "homework": true },
+              { "id": "s2", "date_time": "2025-06-15 10:00", "summary": "Techniki relaksacyjne", "homework": false }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "SelfWork",
+      "components": [
+        { "type": "Header", "props": { "title": "Praca własna", "showBackButton": true } },
+        {
+          "type": "MenuGrid",
+          "props": {
+            "items": [
+              { "key": "Homework", "label": "Zadania domowe", "icon": "📚" },
+              { "key": "Reading", "label": "Lektury", "icon": "📖" },
+              { "key": "Exercises", "label": "Ćwiczenia", "icon": "💪" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Homework",
+      "components": [
+        { "type": "Header", "props": { "title": "Zadania domowe", "showBackButton": true } },
+        {
+          "type": "TaskList",
+          "props": {
+            "tasks": [
+              { "id": "t1", "title": "Dziennik wdzięczności", "dueDate": "2025-06-20", "status": "pending" },
+              { "id": "t2", "title": "Rozdział o stresie", "dueDate": "2025-06-25", "status": "completed" }
+            ]
+          }
+        },
+        { "type": "UploadButton", "props": { "label": "Prześlij rozwiązanie" } }
+      ]
+    },
+    {
+      "name": "Reading",
+      "components": [
+        { "type": "Header", "props": { "title": "Lektury", "showBackButton": true } },
+        {
+          "type": "ReadingList",
+          "props": {
+            "items": [
+              { "id": "r1", "title": "Artykuł o uważności", "url": "https://..." },
+              { "id": "r2", "title": "Fragment książki XYZ", "url": "https://..." }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Exercises",
+      "components": [
+        { "type": "Header", "props": { "title": "Ćwiczenia", "showBackButton": true } },
+        {
+          "type": "ExerciseList",
+          "props": {
+            "exercises": [
+              { "id": "e1", "title": "Ćwiczenie oddechowe", "description": "5 minut relaksu" },
+              { "id": "e2", "title": "Dziennik myśli", "description": "Zapisz trzy myśli" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tests",
+      "components": [
+        { "type": "Header", "props": { "title": "Testy", "showBackButton": true } },
+        {
+          "type": "TestList",
+          "props": {
+            "tests": [
+              { "id": "iq", "title": "Test IQ" },
+              { "id": "mbti", "title": "Test MBTI" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Settings",
+      "components": [
+        { "type": "Header", "props": { "title": "Ustawienia", "showBackButton": true } },
+        {
+          "type": "SettingsList",
+          "props": {
+            "items": ["Profil", "Powiadomienia", "Płatności", "Pomoc", "Wyloguj"]
+          }
+        }
+      ]
+    }
+  ]
+}
