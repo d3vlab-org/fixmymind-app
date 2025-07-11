@@ -44,7 +44,18 @@ export default function Dashboard() {
                         <Text style={{ color: '#111827', fontWeight: 'bold' }}>💬 Sesja tekstowa</Text>
                     </TouchableOpacity>
                 </View>
-
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('PaymentPlans')}
+                    style={{
+                        marginTop: 8,
+                        paddingVertical: 14,
+                        backgroundColor: '#10b981',
+                        borderRadius: 10,
+                        alignItems: 'center',
+                    }}
+                >
+                    <Text style={{ color: 'white', fontWeight: 'bold' }}>🛒 Zobacz pakiety</Text>
+                </TouchableOpacity>
                 <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold', marginBottom: 12 }}>
                     Twoje sesje
                 </Text>

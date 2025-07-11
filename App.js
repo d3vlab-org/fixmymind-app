@@ -14,6 +14,8 @@ import Tests from "./src/screens/Tests";
 import TestSession from "./src/screens/TestSession";
 import GoogleRedirectHandler from "./src/screens/GoogleRedirectHandler";
 import VoiceSession from "./src/screens/VoiceSession";
+import PaymentPlans from "./src/screens/PaymentPlans";
+import UserProfile from "./src/screens/UserProfile";
 
 const Stack = createNativeStackNavigator();
 
@@ -39,6 +41,9 @@ const AppNavigator = () => {
                 <Stack.Screen name="TestSession" component={TestSession} />
                 <Stack.Screen name="VoiceSession" component={VoiceSession} />
                 <Stack.Screen name="GoogleRedirect" component={GoogleRedirectHandler} />
+                <Stack.Screen name="PaymentPlans" component={PaymentPlans} />
+                <Stack.Screen name="UserProfile" component={UserProfile} />
+
             </Stack.Navigator>
         </NavigationContainer>
     );

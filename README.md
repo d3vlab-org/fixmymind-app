@@ -76,7 +76,7 @@ src/
 │   ├── TestStack.js
 │   └── VoiceStack.js
 ├── screens/
-│   ├── AccountSettings.js
+│   ├── UserProfile.js
 │   ├── Chat.js
 │   ├── Dashboard.js
 │   ├── Login.js
