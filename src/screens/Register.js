@@ -1,43 +1,46 @@
+// src/screens/Register.js
 import React, { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { TextInput, Button, View, Text } from 'react-native';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useAuth } from '../context/AuthContext';
-import AppLayout from '../components/layout/AuthLayout';
-import AuthForm from '../components/AuthForm';
+import { auth } from '../utils/auth/firebase';
 
 export default function Register() {
-    const navigation = useNavigation();
-    const { register } = useAuth();
-
+    const { setUser, setToken } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleRegister = async () => {
-        if (!email.includes('@') || password.length < 6) {
-            alert('Wprowadź poprawny e-mail i hasło (min. 6 znaków)');
-            return;
-        }
-
-        const success = await register(email, password);
-        if (success) {
-            navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
-        } else {
-            alert('Nie udało się zarejestrować. Sprawdź połączenie internetowe lub spróbuj ponownie później.');
+    const register = async () => {
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const token = await userCredential.user.getIdToken();
+            setUser(userCredential.user);
+            setToken(token);
+        } catch (err) {
+            console.error('Błąd rejestracji:', err);
         }
     };
 
     return (
-        <AppLayout showHeader={false}>
-            <AuthForm
-                title="Rejestracja"
-                buttonText="Zarejestruj się"
-                email={email}
-                onEmailChange={setEmail}
-                password={password}
-                onPasswordChange={setPassword}
-                onSubmit={handleRegister}
-                footerText="Masz już konto? Zaloguj się"
-                onFooterPress={() => navigation.navigate('Login')}
+        <View className="flex-1 items-center justify-center bg-black p-4">
+            <Text className="text-white text-2xl mb-6">Zarejestruj się</Text>
+            <TextInput
+                placeholder="Email"
+                placeholderTextColor="#ccc"
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                className="w-full bg-white rounded p-2 mb-2"
             />
-        </AppLayout>
+            <TextInput
+                placeholder="Hasło"
+                placeholderTextColor="#ccc"
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+                className="w-full bg-white rounded p-2 mb-4"
+            />
+            <Button title="Zarejestruj" onPress={register} />
+        </View>
     );
 }

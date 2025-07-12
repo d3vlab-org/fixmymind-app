@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Mic, SendHorizonal } from 'lucide-react-native';
 import useVoiceRecorder from '../utils/useVoiceRecorder';
@@ -31,15 +31,25 @@ export default function VoiceSession() {
     }, [sessionId]);
 
     const handleRecord = async () => {
-        setStatus('recording');
-        await startRecording().catch(console.error);
-        setStatus('idle');
+        try {
+            setStatus('recording');
+            await startRecording();
+        } catch (e) {
+            console.error(e);
+            setStatus('idle');
+        }
     };
 
     const handleStop = async () => {
-        const uri = await stopRecording().catch(console.error);
-        if (uri) {
-            setAudioUri(uri);
+        try {
+            const uri = await stopRecording();
+            if (uri) {
+                setAudioUri(uri);
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setStatus('idle'); // ✅ teraz tu wracamy do 'idle'
         }
     };
 
@@ -47,22 +57,28 @@ export default function VoiceSession() {
         if (!audioUri) return;
         setStatus('sending');
 
-        const form = new FormData();
-        const file = await fetch(audioUri).then((r) => r.blob());
-        form.append('file', new File([file], 'recording.m4a', { type: 'audio/m4a' }));
+        try {
+            const form = new FormData();
+            const file = await fetch(audioUri).then((r) => r.blob());
+            form.append('file', new File([file], 'recording.m4a', { type: 'audio/m4a' }));
 
-        const res = await fetch(`https://api.fixmymind.org/api/voice-sessions/${sessionId}/messages`, {
-            method: 'POST',
-            body: form,
-            headers: { Accept: 'application/json' },
-        });
-        const data = await res.json();
+            const res = await fetch(`https://api.fixmymind.org/api/voice-sessions/${sessionId}/messages`, {
+                method: 'POST',
+                body: form,
+                headers: { Accept: 'application/json' },
+            });
 
-        if (res.ok && data.messages) {
-            setMessages((prev) => [...prev, ...data.messages]);
-            setAudioUri(null);
+            const data = await res.json();
+
+            if (res.ok && data.messages) {
+                setMessages((prev) => [...prev, ...data.messages]);
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setAudioUri(null); // ✅ wyczyść po wysłaniu
+            setStatus('idle');
         }
-        setStatus('idle');
     };
 
     const onPlay = async (uri, id) => {
@@ -100,9 +116,9 @@ export default function VoiceSession() {
                         onPlay={onPlay}
                         onStop={onStop}
                     />
-                    {status === 'sending' && (
+                    {(status === 'sending' || status === 'playing') && (
                         <Text className="text-center text-sm text-purple-500 mt-4 animate-pulse">
-                            🤔 AI myśli…
+                            🤔 AI przetwarza odpowiedź...
                         </Text>
                     )}
                 </View>

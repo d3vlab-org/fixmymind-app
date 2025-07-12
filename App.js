@@ -4,6 +4,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider } from './src/context/AuthContext';
 
+// Initialize Firebase when the app starts
+import './src/utils/auth/firebase';
+
 import SplashScreen from './src/screens/Splash';
 import Welcome from './src/screens/Welcome';
 import Login from './src/screens/Login';
@@ -16,6 +19,7 @@ import GoogleRedirectHandler from "./src/screens/GoogleRedirectHandler";
 import VoiceSession from "./src/screens/VoiceSession";
 import PaymentPlans from "./src/screens/PaymentPlans";
 import UserProfile from "./src/screens/UserProfile";
+import CheckoutSuccess from "./src/screens/CheckoutSucess";
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +47,7 @@ const AppNavigator = () => {
                 <Stack.Screen name="GoogleRedirect" component={GoogleRedirectHandler} />
                 <Stack.Screen name="PaymentPlans" component={PaymentPlans} />
                 <Stack.Screen name="UserProfile" component={UserProfile} />
+                <Stack.Screen name="CheckoutSuccess" component={CheckoutSuccess} />
 
             </Stack.Navigator>
         </NavigationContainer>
