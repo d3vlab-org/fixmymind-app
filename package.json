@@ -21,6 +21,8 @@
     "@react-navigation/stack": "^7.4.0",
     "axios": "^1.10.0",
     "dayjs": "^1.11.13",
+    "laravel-echo": "^1.15.3",
+    "pusher-js": "^8.4.0-rc2",
     "expo": "~53.0.12",
     "expo-application": "~6.1.5",
     "expo-audio": "~0.4.8",

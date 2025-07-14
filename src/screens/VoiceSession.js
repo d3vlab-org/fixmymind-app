@@ -7,6 +7,7 @@ import useVoicePlayer from '../utils/useVoicePlayer';
 import VoiceTranscript from './VoiceTranscript';
 import AppLayout from '../components/layout/AppLayout';
 import HeaderWithMenu from '../components/HeaderWithMenu';
+import { getEcho } from '../utils/echo';
 
 export default function VoiceSession() {
     const route = useRoute();
@@ -28,6 +29,77 @@ export default function VoiceSession() {
                 .then((json) => setMessages(json.messages || []))
                 .catch(console.error);
         }
+    }, [sessionId]);
+
+    // Set up Laravel Echo listeners
+    useEffect(() => {
+        if (!sessionId || sessionId === 'new' || Platform.OS !== 'web') return;
+
+        const echo = getEcho();
+
+        // Listen for TranscriptionReceived event
+        const transcriptionChannel = echo.channel(`session.${sessionId}`);
+
+        transcriptionChannel.listen('TranscriptionReceived', (event) => {
+            console.log('TranscriptionReceived event:', event);
+            setMessages(prevMessages => {
+                // Find the message with the matching ID and update it
+                const updatedMessages = [...prevMessages];
+                const messageIndex = updatedMessages.findIndex(msg => msg.id === event.id);
+
+                if (messageIndex !== -1) {
+                    updatedMessages[messageIndex] = {
+                        ...updatedMessages[messageIndex],
+                        text: event.text
+                    };
+                }
+
+                return updatedMessages;
+            });
+        });
+
+        // Listen for AiResponseReady event
+        transcriptionChannel.listen('AiResponseReady', (event) => {
+            console.log('AiResponseReady event:', event);
+            setMessages(prevMessages => {
+                // Find the message with the matching ID and update it
+                const updatedMessages = [...prevMessages];
+                const messageIndex = updatedMessages.findIndex(msg => msg.id === event.id);
+
+                if (messageIndex !== -1) {
+                    updatedMessages[messageIndex] = {
+                        ...updatedMessages[messageIndex],
+                        text: event.text
+                    };
+                }
+
+                return updatedMessages;
+            });
+        });
+
+        // Listen for AudioReady event
+        transcriptionChannel.listen('AudioReady', (event) => {
+            console.log('AudioReady event:', event);
+            setMessages(prevMessages => {
+                // Find the message with the matching ID and update it
+                const updatedMessages = [...prevMessages];
+                const messageIndex = updatedMessages.findIndex(msg => msg.id === event.id);
+
+                if (messageIndex !== -1) {
+                    updatedMessages[messageIndex] = {
+                        ...updatedMessages[messageIndex],
+                        text: event.text
+                    };
+                }
+
+                return updatedMessages;
+            });
+        });
+
+        // Cleanup function
+        return () => {
+            echo.leave(`session.${sessionId}`);
+        };
     }, [sessionId]);
 
     const handleRecord = async () => {
