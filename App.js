@@ -3,6 +3,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider } from './src/context/AuthContext';
+import { ThemeProvider } from './src/contexts/ThemeContext';
 
 // Initialize Firebase when the app starts
 import './src/utils/auth/firebase';
@@ -58,7 +59,9 @@ export default function App() {
 
     return (
         <AuthProvider>
-            <AppNavigator />
+            <ThemeProvider>
+                <AppNavigator />
+            </ThemeProvider>
         </AuthProvider>
     );
 }

@@ -1,62 +1,56 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, Linking, ActivityIndicator } from 'react-native';
-import AppLayout from '../components/layout/AppLayout';
-import HeaderWithMenu from '../components/HeaderWithMenu';
+import React, {useState} from 'react';
+import {View, Text, TouchableOpacity, Linking, ScrollView} from 'react-native';
+import pricing from '../utils/pricing.json';
+import HeaderWithMenu from "../components/HeaderWithMenu"; // <- dostosuj ścieżkę jeśli inna
 
 export default function PaymentPlans() {
-    const [plans, setPlans] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [plans] = useState(pricing);
 
-    useEffect(() => {
-        const fetchPlans = async () => {
-            try {
-                const response = await fetch('https://api.fixmymind.org/pricing');
-                const data = await response.json();
-                setPlans(data);
-            } catch (error) {
-                console.error('❌ Błąd ładowania planów:', error);
-                setPlans([]); // fallback na pustą listę
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchPlans();
-    }, []);
-
-    const handleSubscribe = (url) => {
-        if (url) {
-            Linking.openURL(url);
-        } else {
-            console.warn('❗ Brak linku do płatności');
+    const handleSubscribe = (link) => {
+        if (!link) {
+            console.warn('Brak linku do płatności');
+            return;
         }
+        Linking.openURL(link);
     };
 
     return (
         <AppLayout>
-            <HeaderWithMenu />
-            <View className="p-6">
-                <Text className="text-white text-xl font-bold mb-4">Dostępne plany subskrypcji</Text>
-                {loading && <ActivityIndicator color="#fff" />}
-                {Array.isArray(plans) && plans.map((plan, index) => (
-                    <View key={index} className="bg-purple-800 rounded-xl p-4 mb-6">
-                        <Text className="text-white text-lg font-bold mb-2">{plan.name}</Text>
-                        {plan.features && plan.features.map((feature, i) => (
-                            <Text key={i} className="text-white">• {feature}</Text>
-                        ))}
-                        <Text className="text-white font-bold mt-2">{plan.price} / {plan.interval}</Text>
-                        <TouchableOpacity
-                            onPress={() => handleSubscribe(plan.link)}
-                            className="bg-white px-6 py-3 rounded-full mt-4"
-                        >
-                            <Text style={{ color: 'black', fontWeight: 'bold' }}>Kup</Text>
-                        </TouchableOpacity>
-                    </View>
-                ))}
-                {!loading && plans.length === 0 && (
-                    <Text className="text-white">Brak dostępnych planów.</Text>
-                )}
-            </View>
+            <HeaderWithMenu/>
+            <ScrollView className="flex-1 bg-gradient-to-b from-[#3a1c71] via-[#5f33aa] to-[#7b4397] p-4">
+                <Text className="text-white text-2xl font-bold mb-4">Dostępne plany subskrypcji</Text>
+
+                {plans.map((plan, index) => {
+                    const price = plan.price === 0 ? '0' : (plan.price / 100).toFixed(2);
+                    const currency = plan.currency || 'PLN';
+                    const interval = plan.interval || 'month';
+
+                    return (
+                        <View key={index} className="bg-purple-800 rounded-2xl p-4 mb-4">
+                            <Text className="text-white text-xl font-semibold mb-2">{plan.name}</Text>
+
+                            {plan.features?.map((feature, i) => (
+                                <Text key={i} className="text-white text-sm mb-1">• {feature}</Text>
+                            ))}
+
+                            <Text className="text-white font-bold mt-2">
+                                {price} {currency} / {interval}
+                            </Text>
+
+                            {plan.link ? (
+                                <TouchableOpacity
+                                    onPress={() => handleSubscribe(plan.link)}
+                                    className="bg-white px-6 py-2 rounded-full mt-4"
+                                >
+                                    <Text style={{color: 'black', fontWeight: 'bold'}}>Kup</Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <Text className="text-yellow-300 mt-4 italic">Brak linku do płatności</Text>
+                            )}
+                        </View>
+                    );
+                })}
+            </ScrollView>
         </AppLayout>
     );
 }
