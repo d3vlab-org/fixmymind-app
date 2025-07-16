@@ -1,13 +1,1 @@
-name: Frontend Dev Notification
 
-on:
-  push:
-    branches:
-      - dev
-
-jobs:
-  notify:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Powiadom o pushu
-        run: echo "Zmieniono frontend dev – uruchom lokalnie"

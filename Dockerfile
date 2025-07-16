@@ -6,7 +6,7 @@ WORKDIR /app
 COPY . .
 
 RUN npm install
-RUN npx expo export:web
+RUN npx expo export --platform web
 
 # --- Serwujemy z pomocą "serve" ---
 FROM node:18-alpine
