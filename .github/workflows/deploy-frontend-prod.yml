@@ -19,7 +19,7 @@ jobs:
           echo "${HOME}/.fly/bin" >> $GITHUB_PATH
 
       - name: Authenticate with Fly.io
-        run: echo "${{ secrets.FLY_API_TOKEN }}" | fly auth token
+        run: fly auth login --access-token "${{ secrets.FLY_API_TOKEN }}"
 
       - name: Deploy to Fly.io (Frontend)
         env:
