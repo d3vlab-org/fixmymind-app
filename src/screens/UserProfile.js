@@ -5,6 +5,7 @@ import HeaderWithMenu from '../components/HeaderWithMenu';
 import axios from 'axios';
 import { API_URL } from '../config/api';
 import { useTheme } from '../contexts/ThemeContext';
+import { getSession } from '../utils/SupabaseService';
 
 export default function UserProfile() {
     const { theme, isDarkTheme, toggleTheme } = useTheme();
@@ -21,8 +22,23 @@ export default function UserProfile() {
     const fetchUserProfile = async () => {
         try {
             setLoading(true);
-            // For now, use the /me endpoint since profile endpoint requires authentication
-            const response = await axios.get(`${API_URL}/me`);
+            // Get the current session from Supabase
+            const session = await getSession();
+
+            if (!session) {
+                throw new Error('No active session found');
+            }
+
+            // Extract the access token from the session
+            const accessToken = session.access_token;
+
+            // Use the access token in the Authorization header
+            const response = await axios.get(`${API_URL}/me`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+
             if (response.data) {
                 setName(response.data.name);
                 // Note: Theme is now managed by ThemeContext
@@ -38,7 +54,22 @@ export default function UserProfile() {
     const handleSaveProfile = async () => {
         try {
             setLoading(true);
-            await axios.put(`${API_URL}/profile/name`, { name });
+
+            // Get the current session from Supabase
+            const session = await getSession();
+
+            if (!session) {
+                throw new Error('No active session found');
+            }
+
+            // Extract the access token from the session
+            const accessToken = session.access_token;
+
+            await axios.put(`${API_URL}/profile/name`, { name }, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
             Alert.alert('Zapisano', 'Imię zostało zaktualizowane.');
         } catch (error) {
             console.error('Error updating name:', error);
@@ -56,9 +87,24 @@ export default function UserProfile() {
 
         try {
             setLoading(true);
+
+            // Get the current session from Supabase
+            const session = await getSession();
+
+            if (!session) {
+                throw new Error('No active session found');
+            }
+
+            // Extract the access token from the session
+            const accessToken = session.access_token;
+
             await axios.put(`${API_URL}/profile/password`, { 
                 password,
                 password_confirmation: password2
+            }, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
             });
             setPassword('');
             setPassword2('');

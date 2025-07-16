@@ -3,10 +3,8 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider } from './src/context/AuthContext';
+import { SupabaseAuthProvider } from './src/context/SupabaseAuthContext';
 import { ThemeProvider } from './src/contexts/ThemeContext';
-
-// Initialize Firebase when the app starts
-import './src/utils/auth/firebase';
 
 import SplashScreen from './src/screens/Splash';
 import Welcome from './src/screens/Welcome';
@@ -58,10 +56,12 @@ const AppNavigator = () => {
 export default function App() {
 
     return (
-        <AuthProvider>
-            <ThemeProvider>
-                <AppNavigator />
-            </ThemeProvider>
-        </AuthProvider>
+        <SupabaseAuthProvider>
+            <AuthProvider>
+                <ThemeProvider>
+                    <AppNavigator />
+                </ThemeProvider>
+            </AuthProvider>
+        </SupabaseAuthProvider>
     );
 }

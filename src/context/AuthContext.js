@@ -1,39 +1,133 @@
 // src/context/AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../utils/auth/firebase';
+import {
+  supabase,
+  loginWithEmailPassword,
+  loginWithGoogle,
+  signUp,
+  logout as supabaseLogout,
+  getUser,
+  getSession,
+  onAuthStateChange
+} from '../utils/SupabaseService';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);         // Firebase user object
-    const [token, setToken] = useState(null);       // JWT from Firebase
+    const [user, setUser] = useState(null);         // Supabase user object
+    const [token, setToken] = useState(null);       // JWT from Supabase
     const [loading, setLoading] = useState(true);   // Loading state for auth check
 
-    // Listen to Firebase auth state changes
+    // Initialize auth state
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-            if (firebaseUser) {
-                setUser(firebaseUser);
-                try {
-                    const idToken = await firebaseUser.getIdToken();
-                    setToken(idToken);
-                } catch (error) {
-                    console.error('Error getting ID token:', error);
+        // Get the current session when the component mounts
+        const initializeAuth = async () => {
+            try {
+                setLoading(true);
+                // Get current session
+                const session = await getSession();
+                if (session) {
+                    setUser(session.user);
+                    setToken(session.access_token);
                 }
-            } else {
+                // Get current user as fallback
+                if (!session) {
+                    const currentUser = await getUser();
+                    if (currentUser) {
+                        setUser(currentUser);
+                        // We don't have the token here, it would be in the session
+                    }
+                }
+            } catch (error) {
+                console.error('Error initializing auth:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        initializeAuth();
+
+        // Subscribe to auth state changes
+        const unsubscribe = onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' && session?.user) {
+                setUser(session.user);
+                setToken(session.access_token);
+            } else if (event === 'SIGNED_OUT') {
                 setUser(null);
                 setToken(null);
+            } else if (event === 'USER_UPDATED' && session?.user) {
+                setUser(session.user);
+                setToken(session.access_token);
+            } else if (event === 'TOKEN_REFRESHED' && session) {
+                setToken(session.access_token);
             }
-            setLoading(false);
         });
 
-        return unsubscribe; // Cleanup subscription on unmount
+        // Cleanup subscription on unmount
+        return () => {
+            unsubscribe();
+        };
     }, []);
 
+    // Login with email and password
+    const login = async (email, password) => {
+        try {
+            setLoading(true);
+            const data = await loginWithEmailPassword(email, password);
+            setUser(data.user);
+            setToken(data.session?.access_token);
+            return data;
+        } catch (error) {
+            console.error('Error logging in:', error);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Register with email and password
+    const register = async (email, password) => {
+        try {
+            setLoading(true);
+            const data = await signUp(email, password);
+            setUser(data.user);
+            setToken(data.session?.access_token);
+            return data;
+        } catch (error) {
+            console.error('Error registering:', error);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Login with Google
+    const loginWithGoogleAuth = async () => {
+        try {
+            setLoading(true);
+            const data = await loginWithGoogle();
+            return data;
+        } catch (error) {
+            console.error('Error logging in with Google:', error);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Logout
     const logout = async () => {
-        setUser(null);
-        setToken(null);
+        try {
+            setLoading(true);
+            await supabaseLogout();
+            setUser(null);
+            setToken(null);
+        } catch (error) {
+            console.error('Error logging out:', error);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -44,7 +138,12 @@ export const AuthProvider = ({ children }) => {
             setToken,
             loading,
             setLoading,
-            logout
+            login,
+            register,
+            logout,
+            loginWithGoogle: loginWithGoogleAuth,
+            getUser: () => user,
+            supabase
         }}>
             {children}
         </AuthContext.Provider>

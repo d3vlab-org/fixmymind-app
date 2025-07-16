@@ -1,9 +1,8 @@
 // src/screens/Register.js
 import React, { useState } from 'react';
 import { TextInput, Button, View, Text } from 'react-native';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useAuth } from '../context/AuthContext';
-import { auth } from '../utils/auth/firebase';
+import { signUp } from '../utils/SupabaseService';
 
 export default function Register() {
     const { setUser, setToken } = useAuth();
@@ -12,10 +11,12 @@ export default function Register() {
 
     const register = async () => {
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const token = await userCredential.user.getIdToken();
-            setUser(userCredential.user);
-            setToken(token);
+            const data = await signUp(email, password);
+            setUser(data.user);
+            // Supabase stores the session token in data.session.access_token
+            if (data.session) {
+                setToken(data.session.access_token);
+            }
         } catch (err) {
             console.error('Błąd rejestracji:', err);
         }
