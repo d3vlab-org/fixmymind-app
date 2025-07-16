@@ -1,10 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
+import { supabaseConfig } from './auth/config.js';
 
 // Initialize Supabase client
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://kllkdlusdharsschouuq.supabase.co';
-const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtsbGtkbHVzZGhhcnNzY2hvdXVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2ODM1OTYsImV4cCI6MjA2ODI1OTU5Nn0.YD-qT8MfnEbxWwqY_z5ZacqFB2411FIN413Fh9LiudA';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseConfig.url, supabaseConfig.key);
 
 /**
  * Login with email and password
@@ -18,7 +16,7 @@ const loginWithEmailPassword = async (email, password) => {
       email,
       password,
     });
-    
+
     if (error) throw error;
     return data;
   } catch (error) {
@@ -36,7 +34,7 @@ const loginWithGoogle = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
     });
-    
+
     if (error) throw error;
     return data;
   } catch (error) {
@@ -55,7 +53,7 @@ const loginWithPhone = async (phone) => {
     const { data, error } = await supabase.auth.signInWithOtp({
       phone,
     });
-    
+
     if (error) throw error;
     return data;
   } catch (error) {
@@ -76,7 +74,7 @@ const signUp = async (email, password) => {
       email,
       password,
     });
-    
+
     if (error) throw error;
     return data;
   } catch (error) {
@@ -139,7 +137,7 @@ const onAuthStateChange = (callback) => {
   const { data } = supabase.auth.onAuthStateChange((event, session) => {
     callback(event, session);
   });
-  
+
   return data.subscription.unsubscribe;
 };
 

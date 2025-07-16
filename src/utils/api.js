@@ -1,4 +1,4 @@
-const API_URL = 'https://api.fixmymind.org/api'; // dopasuj do środowiska
+import {API_URL} from "./auth/config";
 
 export async function fetchSuggestedTests(token) {
     const res = await fetch(`${API_URL}/tests/suggest`, {
