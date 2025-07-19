@@ -1,6 +1,7 @@
 name: Deploy Frontend to Fly.io (Production)
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
