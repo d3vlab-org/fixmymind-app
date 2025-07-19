@@ -68,7 +68,7 @@ export default function Register() {
             handleAuthError(err, 'Google');
         } finally {
             setLoading(false);
-        }
+        } 
     };
 
     const registerWithFacebook = async () => {
