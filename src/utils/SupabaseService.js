@@ -44,6 +44,60 @@ const loginWithGoogle = async () => {
 };
 
 /**
+ * Sign up with Google OAuth
+ * @returns {Promise} - Supabase auth response
+ */
+const signUpWithGoogle = async () => {
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+    });
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error signing up with Google:', error.message);
+    throw error;
+  }
+};
+
+/**
+ * Login with Facebook OAuth
+ * @returns {Promise} - Supabase auth response
+ */
+const loginWithFacebook = async () => {
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'facebook',
+    });
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error logging in with Facebook:', error.message);
+    throw error;
+  }
+};
+
+/**
+ * Sign up with Facebook OAuth
+ * @returns {Promise} - Supabase auth response
+ */
+const signUpWithFacebook = async () => {
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'facebook',
+    });
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error signing up with Facebook:', error.message);
+    throw error;
+  }
+};
+
+/**
  * Login with phone number
  * @param {string} phone - User's phone number
  * @returns {Promise} - Supabase auth response
@@ -58,6 +112,25 @@ const loginWithPhone = async (phone) => {
     return data;
   } catch (error) {
     console.error('Error logging in with phone:', error.message);
+    throw error;
+  }
+};
+
+/**
+ * Sign up with phone number
+ * @param {string} phone - User's phone number
+ * @returns {Promise} - Supabase auth response
+ */
+const signUpWithPhone = async (phone) => {
+  try {
+    const { data, error } = await supabase.auth.signInWithOtp({
+      phone,
+    });
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error signing up with phone:', error.message);
     throw error;
   }
 };
@@ -145,7 +218,11 @@ export {
   supabase,
   loginWithEmailPassword,
   loginWithGoogle,
+  signUpWithGoogle,
+  loginWithFacebook,
+  signUpWithFacebook,
   loginWithPhone,
+  signUpWithPhone,
   signUp,
   logout,
   getSession,
