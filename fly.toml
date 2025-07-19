@@ -7,6 +7,9 @@ dockerfile = "./Dockerfile"
 
 [env]
 NODE_ENV = "production"
+EXPO_PUBLIC_SUPABASE_URL = ""
+EXPO_PUBLIC_SUPABASE_KEY = ""
+API_URL = ""
 
 [[services]]
 internal_port = 3000

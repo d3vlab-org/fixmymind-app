@@ -28,4 +28,8 @@ jobs:
           API_URL: ${{ secrets.API_URL_PROD }}
           EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
           EXPO_PUBLIC_SUPABASE_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_KEY }}
-        run: fly deploy --config fly.toml --remote-only
+        run: |
+          fly deploy --config fly.toml --remote-only \
+            --build-arg EXPO_PUBLIC_SUPABASE_URL="${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}" \
+            --build-arg EXPO_PUBLIC_SUPABASE_KEY="${{ secrets.EXPO_PUBLIC_SUPABASE_KEY }}" \
+            --build-arg API_URL="${{ secrets.API_URL_PROD }}"
