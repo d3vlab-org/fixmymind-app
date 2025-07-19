@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { supabaseConfig } from './auth/config.js';
 
-// Initialize Supabase client
+// Initialize Supabase clientasd
 const supabase = createClient(supabaseConfig.url, supabaseConfig.key);
 
 /**
